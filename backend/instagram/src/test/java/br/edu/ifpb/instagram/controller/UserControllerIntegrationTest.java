@@ -51,7 +51,7 @@ public class UserControllerIntegrationTest {
                                 "teste@gmail.com",
                                 "87654321",
                                 "Teste Junior",
-                                "testezin");
+                                "testando");
 
                 MvcResult signupResult = mockMvc.perform(post("/auth/signup")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -116,7 +116,7 @@ public class UserControllerIntegrationTest {
                                 "teste@gmail.com",
                                 "11111111",
                                 "Teste da Silva",
-                                "testezin");
+                                "testando");
 
                 mockMvc.perform(put("/users")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -136,7 +136,7 @@ public class UserControllerIntegrationTest {
         }
 
         @Test
-        @Order(4)
+        @Order(5)
         void whenDeleteUser_shouldDeletedUser() throws Exception {
 
                 mockMvc.perform(delete("/users/" + userId)
@@ -145,31 +145,8 @@ public class UserControllerIntegrationTest {
         }
 
         @Test
-        @Order(5)
-        void whenDeleteUserWithNonNumericId_shouldDeletedUser() throws Exception {
-
-                newUser = new UserDetailsRequest(
-                                null,
-                                "teste@gmail.com",
-                                "87654321",
-                                "Teste Junior",
-                                "testezin");
-
-                MvcResult signupResult = mockMvc.perform(post("/auth/signup")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(newUser)))
-                                .andReturn();
-
-                String jsonResponse = signupResult.getResponse().getContentAsString();
-                userId = objectMapper.readTree(jsonResponse).get("id").asLong();
-
-                LoginRequest loginRequest = new LoginRequest("testezin", "87654321");
-                MvcResult signinResult = mockMvc.perform(post("/auth/signin")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(loginRequest)))
-                                .andReturn();
-
-                token = objectMapper.readTree(signinResult.getResponse().getContentAsString()).get("token").asText();
+        @Order(4)
+        void whenDeleteUserWithNonNumericId_shouldThrowException() throws Exception {
 
                 mockMvc.perform(delete("/users/abc")
                                 .header("Authorization", "Bearer " + token))
