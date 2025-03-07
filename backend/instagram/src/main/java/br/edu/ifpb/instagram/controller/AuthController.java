@@ -35,26 +35,24 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public UserDetailsResponse signUp(@RequestBody UserDetailsRequest userDetailsRequest){
+    public UserDetailsResponse signUp(@RequestBody UserDetailsRequest userDetailsRequest) {
 
         // object to move across several layers
         UserDto userDto = new UserDto(
-            null,
-            userDetailsRequest.fullName(),
-            userDetailsRequest.username(),
-            userDetailsRequest.email(),
-            userDetailsRequest.password(),
-            null
-        );
+                null,
+                userDetailsRequest.fullName(),
+                userDetailsRequest.username(),
+                userDetailsRequest.email(),
+                userDetailsRequest.password(),
+                null);
 
         UserDto createdUserDto = userService.createUser(userDto);
 
         return new UserDetailsResponse(
-            createdUserDto.id(),
-            createdUserDto.fullName(),
-            createdUserDto.username(),
-            createdUserDto.email()
-        );
+                createdUserDto.id(),
+                createdUserDto.fullName(),
+                createdUserDto.username(),
+                createdUserDto.email());
     }
 
 }
