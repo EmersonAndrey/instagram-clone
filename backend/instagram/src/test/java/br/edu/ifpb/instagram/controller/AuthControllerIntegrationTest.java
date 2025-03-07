@@ -1,6 +1,5 @@
 package br.edu.ifpb.instagram.controller;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -10,11 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -52,7 +48,7 @@ public class AuthControllerIntegrationTest {
     }
 
     @Test
-    void whenInvalidJson_shouldReturnBadRequest() throws Exception {
+    void whenSignUpInvalidJson_shouldReturnBadRequest() throws Exception {
 
         String invalidJson = "{ \"email\": \"teste@gmail.com\", \"password\": }";
 
@@ -87,7 +83,7 @@ public class AuthControllerIntegrationTest {
     }
 
     @Test
-    void whenSignInWrong_shouldReturnBasRequest() throws Exception {
+    void whenSignInWrong_shouldReturnInvalidPermission() throws Exception {
 
         LoginRequest loginRequest = new LoginRequest("teste", "11111111");
 
