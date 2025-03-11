@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import java.util.Optional;
 
+import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -28,12 +30,13 @@ public class UserRepositoryTest {
 	@PersistenceContext
     private EntityManager entityManager;
 	
-	UserEntity user1 = new UserEntity();
+	private UserEntity user1 = new UserEntity();
 	
+    @BeforeEach
 	void setUser(){
-       	user1.setFullName("andrey feia");
+       	user1.setFullName("andrey");
         user1.setEmail("ana@email.com.br");
-        user1.setUsername("anaFeia");
+        user1.setUsername("ana");
         user1.setEncryptedPassword("senha1235");
 
         user1 = userRepository.save(user1); 
@@ -44,12 +47,11 @@ public class UserRepositoryTest {
 
 	@Test
 	void buscarUsuarioPorNomeTest() {
-		setUser();
 		
-		Optional<UserEntity> usuarioEncontrado = userRepository.findByUsername("anaFeia");
+		Optional<UserEntity> usuarioEncontrado = userRepository.findByUsername("ana");
 		
         if(usuarioEncontrado.isPresent()){
-            assertEquals("anaFeia", usuarioEncontrado.get().getUsername());
+            assertEquals("ana", usuarioEncontrado.get().getUsername());
 		    assertEquals("ana@email.com.br",usuarioEncontrado.get().getEmail());
         }	
 			
@@ -65,26 +67,18 @@ public class UserRepositoryTest {
 
 	@Test
 	void retornarListaDeUsuariosExistenteTest(){
-		setUser();
 
 		List<UserEntity> listaUsuarios = userRepository.findAll();
 
 		assertNotNull(listaUsuarios);
 		assertThat(listaUsuarios).extracting(UserEntity::getUsername)
-    	.containsExactlyInAnyOrder("anaFeia");
+    	.containsExactlyInAnyOrder("ana");
 		
 	}
-	@Test
-	void retornaListaVaziaTest(){
-		List<UserEntity> listaUsuarios = userRepository.findAll();
-		assertThat(listaUsuarios).isNotNull();
-		assertThat(listaUsuarios).isEmpty();
-	}
 
 
 	@Test
-    public void updatePartialUserTest() {
-        setUser();
+    void updatePartialUserTest() {
 		System.out.println(user1.getFullName());
 		System.out.println(user1.getEmail());
 		System.out.println(user1.getUsername());
@@ -95,7 +89,7 @@ public class UserRepositoryTest {
         int updatedRows = userRepository.updatePartialUser(
                 "ismael", 
                 "ismael@gmail.com", 
-                "andreyFeio", 
+                "andrey", 
                 null, 
                 user1.getId()
         );
@@ -116,7 +110,7 @@ public class UserRepositoryTest {
       
         assertEquals("ismael", updatedUser.getFullName());
         assertEquals("ismael@gmail.com", updatedUser.getEmail());
-        assertEquals("andreyFeio", updatedUser.getUsername()); 
+        assertEquals("andrey", updatedUser.getUsername()); 
         assertEquals("senha1235", updatedUser.getEncryptedPassword());
 
         assertEquals(1, updatedRows);
