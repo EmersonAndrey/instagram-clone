@@ -46,10 +46,9 @@ public class UserRepositoryTest {
 
         Optional<UserEntity> usuarioEncontrado = userRepository.findByUsername("ana");
 
-        if (usuarioEncontrado.isPresent()) {
-            assertEquals("ana", usuarioEncontrado.get().getUsername());
-            assertEquals("ana@email.com.br", usuarioEncontrado.get().getEmail());
-        }
+        assertTrue(usuarioEncontrado.isPresent(), "Usuário atualizado não encontrado!" );
+        assertEquals("ana", usuarioEncontrado.get().getUsername());
+        assertEquals("ana@email.com.br", usuarioEncontrado.get().getEmail());
 
     }
 
@@ -90,7 +89,6 @@ public class UserRepositoryTest {
         assertTrue(updatedUserO.isPresent(), "Usuário atualizado não encontrado!");
 
         UserEntity updatedUser = updatedUserO.get();
-
 
         assertEquals("ismael", updatedUser.getFullName());
         assertEquals("ismael@gmail.com", updatedUser.getEmail());

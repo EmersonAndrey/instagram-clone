@@ -20,7 +20,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import br.edu.ifpb.instagram.model.dto.UserDto;
@@ -31,17 +30,13 @@ import br.edu.ifpb.instagram.repository.UserRepository;
 public class UserServiceImplTest {
 
     @MockitoBean
-    UserRepository userRepository; // Repositório simulado
+    UserRepository userRepository;
 
     @Autowired
-    UserServiceImpl userService; // Classe sob teste
-
-    @MockitoBean
-    PasswordEncoder passwordEncoder;
+    UserServiceImpl userService; 
 
     @Test
     void givenValidUserId_whenFindById_thenReturnUserDto() {
-        // Configurar o comportamento do mock
         Long userId = 1L;
 
         UserEntity mockUserEntity = new UserEntity();
@@ -51,40 +46,33 @@ public class UserServiceImplTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(mockUserEntity));
 
-        // Executar o método a ser testado
         UserDto userDto = userService.findById(userId);
 
-        // Verificar o resultado
         assertNotNull(userDto);
         assertEquals(mockUserEntity.getId(), userDto.id());
         assertEquals(mockUserEntity.getFullName(), userDto.fullName());
         assertEquals(mockUserEntity.getEmail(), userDto.email());
 
-        // Verificar a interação com o mock
         verify(userRepository, times(1)).findById(userId);
     }
 
     @Test
     void givenNonExistentUserId_whenFindById_thenThrowUserNotFoundException() {
-        // Configurar o comportamento do mock
         Long userId = 999L;
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        // Executar e verificar a exceção
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             userService.findById(userId);
         });
 
         assertEquals("User not found", exception.getMessage());
 
-        // Verificar a interação com o mock
         verify(userRepository, times(1)).findById(userId);
     }
 
     @Test
     void givenUserList_whenFindAll_thenReturnListOfUserDtos() {
-        // Cria uma lista de UserEntity simulada
         UserEntity user1 = new UserEntity();
         user1.setId(1L);
         user1.setFullName("Joao Silva");
@@ -101,20 +89,15 @@ public class UserServiceImplTest {
 
         List<UserEntity> mockUserEntities = Arrays.asList(user1, user2);
 
-        // Mock
         when(userRepository.findAll()).thenReturn(mockUserEntities);
 
-        // Chama o método a ser testado
         List<UserDto> result = userService.findAll();
 
-        // Verifica se a lista de DTOs não está vazia
         assertNotNull(result);
         assertFalse(result.isEmpty());
 
-        // Verifica se o tamanho da lista de DTOs é o mesmo da lista de entidades
         assertEquals(mockUserEntities.size(), result.size());
 
-        // Verifica se os dados de cada DTO estão corretos
         for (int i = 0; i < mockUserEntities.size(); i++) {
             UserEntity entity = mockUserEntities.get(i);
             UserDto dto = result.get(i);
@@ -126,20 +109,16 @@ public class UserServiceImplTest {
             assertEquals(entity.getEncryptedPassword(), dto.encryptedPassword());
         }
 
-        // Verifica se o método do repositório foi chamado corretamente
         verify(userRepository, times(1)).findAll();
     }
 
     @Test
     void givenEmptyUserList_whenFindAll_thenThrowUsersNotFoundException() {
 
-        //Configura
         when(userRepository.findAll()).thenReturn(Arrays.asList());
 
-        //Captura exceçao
         Exception exception = assertThrows(RuntimeException.class, () -> userService.findAll());
 
-        //Verificaçoes
         assertEquals("Users not found", exception.getMessage());
         verify(userRepository, times(1)).findAll();
     }
@@ -147,21 +126,16 @@ public class UserServiceImplTest {
     @Test
     void givenUserDtoWithEmptyPassword_whenUpdateUser_thenUserIsUpdatedWithoutPassword() {
 
-        // Configura
         UserDto userDto = new UserDto(1L, "Joao Update", "joaoupdate", "joaoupdate@example.com", "", null);
 
-        // Mock do comportamento do repositório simulando 1 linha modificada
         when(userRepository.updatePartialUser(userDto.fullName(), userDto.email(), userDto.username(), null,
                 userDto.id())).thenReturn(1);
 
-        // Chama o método testado
         UserDto updatedUser = userService.updateUser(userDto);
 
-        // Verificaçoes
         assertNotNull(updatedUser);
         assertNull(updatedUser.encryptedPassword());
 
-        // Verifica se o método de update foi chamado corretamente
         verify(userRepository, times(1)).updatePartialUser(
                 userDto.fullName(), userDto.email(), userDto.username(), null, userDto.id());
     }
@@ -169,17 +143,13 @@ public class UserServiceImplTest {
     @Test
     void givenUserDtoWithPassword_whenUpdateUser_thenUserIsUpdatedWithNewPassword() {
 
-        //Configura
         UserDto userDto = new UserDto(1L, "Joao Updated", "joaoupdated", "joaoupdated@example.com", null,
                 "newpassword");
 
-        // Mock
         when(userRepository.updatePartialUser(any(), any(), any(), any(), any())).thenReturn(1);
 
-        // Chama o método testado
         UserDto result = userService.updateUser(userDto);
 
-        // Verificações
         assertNotNull(result);
         assertEquals(userDto.fullName(), result.fullName());
         verify(userRepository, times(1)).updatePartialUser(any(), any(), any(), any(), any());
@@ -188,16 +158,12 @@ public class UserServiceImplTest {
     @Test
     void givenUserDtoWithoutPassword_whenUpdateUser_thenUserIsUpdatedWithoutPassword() {
 
-        //Configura
         UserDto userDto = new UserDto(1L, "Joao Update", "joaoupdate", "joaoupdate@example.com", null, null);
 
-        //Mock
         when(userRepository.updatePartialUser(any(), any(), any(), isNull(), any())).thenReturn(1);
         
-        //Chama o metodo
         UserDto result = userService.updateUser(userDto);
 
-        //Verificaçoes
         assertNotNull(result);
         assertEquals(userDto.fullName(), result.fullName());
         verify(userRepository, times(1)).updatePartialUser(any(), any(), any(), isNull(), any());
@@ -206,10 +172,8 @@ public class UserServiceImplTest {
     @Test
     void givenNonExistentUserId_whenUpdateUser_thenThrowUserNotFoundException() {
 
-        //Configura
         UserDto userDto = new UserDto(999L, "UserNotExist", "usernotExist", "notexist@example.com", null, "password");
         
-        //Mock
         when(userRepository.updatePartialUser(any(), any(), any(), any(), any())).thenReturn(0);
 
         Exception exception = assertThrows(RuntimeException.class, () -> userService.updateUser(userDto));
@@ -231,13 +195,10 @@ public class UserServiceImplTest {
     @Test
     void givenNonExistentUserId_whenDeleteUser_thenThrowUserNotFoundException() {
 
-        //Configura o metodo para lançar exceção
         doThrow(new RuntimeException("User not found")).when(userRepository).deleteById(999L);
 
-        //Captura a exceção quando o metodo é chamdo
         Exception exception = assertThrows(RuntimeException.class, () -> userService.deleteUser(999L));
 
-        //Verificaçao
         assertEquals("User not found", exception.getMessage());
 
     }
