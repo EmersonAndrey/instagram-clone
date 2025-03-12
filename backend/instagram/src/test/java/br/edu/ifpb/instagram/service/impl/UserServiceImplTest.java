@@ -86,7 +86,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void testFindAll_ReturnsListOfUserDtos() {
+    void givenUserList_whenFindAll_thenReturnListOfUserDtos() {
         // Cria uma lista de UserEntity simulada
         UserEntity user1 = new UserEntity();
         user1.setId(1L);
@@ -134,7 +134,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void testFindAll_EmptyList() {
+    void givenEmptyUserList_whenFindAll_thenThrowUsersNotFoundException() {
 
         //Configura
         when(userRepository.findAll()).thenReturn(Arrays.asList());
@@ -148,7 +148,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void testUpdateUser_WhenPasswordIsEmpty() {
+    void givenUserDtoWithEmptyPassword_whenUpdateUser_thenUserIsUpdatedWithoutPassword() {
 
         // Configura
         UserDto userDto = new UserDto(1L, "Joao Update", "joaoupdate", "joaoupdate@example.com", "", null);
@@ -170,7 +170,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void testUpdateUser_WithPassword() {
+    void givenUserDtoWithPassword_whenUpdateUser_thenUserIsUpdatedWithNewPassword() {
 
         //Configura
         UserDto userDto = new UserDto(1L, "Joao Updated", "joaoupdated", "joaoupdated@example.com", null,
@@ -189,7 +189,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void testUpdateUser_WithoutPassword() {
+    void givenUserDtoWithoutPassword_whenUpdateUser_thenUserIsUpdatedWithoutPassword() {
 
         //Configura
         UserDto userDto = new UserDto(1L, "Joao Update", "joaoupdate", "joaoupdate@example.com", null, null);
@@ -207,7 +207,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void testUpdateUser_UserNotFound() {
+    void givenNonExistentUserId_whenUpdateUser_thenThrowUserNotFoundException() {
 
         //Configura
         UserDto userDto = new UserDto(999L, "UserNotExist", "usernotExist", "notexist@example.com", null, "password");
@@ -222,7 +222,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void testDeleteUser() {
+    void givenValidUserId_whenDeleteUser_thenUserIsDeleted() {
 
         doNothing().when(userRepository).deleteById(1L);
 
@@ -232,7 +232,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void testDeleteUser_UsernotFound() {
+    void givenNonExistentUserId_whenDeleteUser_thenThrowUserNotFoundException() {
 
         //Configura o metodo para lançar exceção
         doThrow(new RuntimeException("User not found")).when(userRepository).deleteById(999L);
