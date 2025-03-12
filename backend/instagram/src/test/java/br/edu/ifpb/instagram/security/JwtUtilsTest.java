@@ -20,38 +20,38 @@ public class JwtUtilsTest {
     @Mock
     private Authentication authentication;
 
-    String token;
+    private String token;
 
     @BeforeEach
-    void generat_ingValid_authentication_before_testing(){
+    void givenBeforeTesting_whenIngValidAuthentication_thenGeneratToken(){
         when(authentication.getName()).thenReturn("usuarioTeste");
+
         token =jwtUtils.generateToken(authentication);
     }
 
     @Test
-    void test_generate_token(){
+    void givenTest_whenGenerateToken_thenCheck(){
         assertNotNull(token);
         assertFalse(token.isEmpty());
     }
 
     @Test
-    void test_check_validate_token(){
+    void givenTest_whenToken_Thencheckvalidate(){ //Verifica a validade do token
         assertTrue(jwtUtils.validateToken(token));
     }
     @Test
-    void test_invalid_token(){
+    void givenTest_whenReceiveTokenInvalid_thenReturnFalse(){ //verifica a validade de um token invalido
         assertFalse(jwtUtils.validateToken(""));
     }
 
     @Test
-    void test_get_user_name_from_token(){
+    void givenTest_whenReceiveToken_thenGetUsername(){
         String userNameToken = jwtUtils.getUsernameFromToken(token);
 
         assertEquals(authentication.getName(),userNameToken, "Os userNames devem ser iguais!");
     }
-
     @Test
-    void test_get_invalid_username_from_token(){
+    void givenTest_whenReceiveToken_thenValidUsername(){
         Authentication authenticationMock = mock(Authentication.class);
         when(authenticationMock.getName()).thenReturn("usuarioTeste02");
 
